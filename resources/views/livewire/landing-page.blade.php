@@ -1,5 +1,8 @@
 <div
-    x-data="{ showSubscribeModal : false }"
+    x-data="{
+         showSubscribeModal : @entangle('showSubscribeModal'),
+         showSuccess : @entangle('showSuccess')
+     }"
     class="flex flex-col bg-indigo-900 w-full h-screen">
     <nav class="flex pt-5 justify-between container mx-auto text-indigo-200">
         <a class="text-4xl font-bold" href="/">
@@ -36,26 +39,38 @@
             </x-button>
         </div>
     </div>
-    <div
-        class="flex fixed top-0 bg-gray-900 bg-opacity-60 items-center w-full h-full"
-        x-show="showSubscribeModal"
-        @click.self="showSubscribeModal = false"
-        @keydown.escape.window="showSubscribeModal = false">
-        <div class="m-auto bg-pink-500 shadow-2xl rounded-xl p-8">
-            <p class="text-white text-5xl font-extrablod text-center">
-                Let's do it!
-            </p>
-            <form
-                wire:submit.prevent="subscribe"
-                class="flex flex-col items-center p-24">
-                <x-input wire:model="email" class="px-5 py-3 w-80 border-blue-400" name="email" placeholder="Email address"/>
-                <span class="text-gray-100 text-xs ">
-                We will send you a confirmation email.
+    <x-modal trigger="showSubscribeModal" class="bg-pink-500">
+        <p class="text-white text-5xl font-extrablod text-center">
+            Let's do it!
+        </p>
+        <form
+            wire:submit.prevent="subscribe"
+            class="flex flex-col items-center p-24">
+            <x-input wire:model="email" class="px-5 py-3 w-80 border-blue-400" type="email"
+                     placeholder="Email address"/>
+            <span class="text-gray-100 text-xs ">
+                {{ $errors->has('email') ? $errors->first('email') : ' We will send you a confirmation email.' }}
             </span>
-                <x-button class="px-5 py-3 mt-5 w-80 bg-blue-500 justify-center">
-                    Get In
-                </x-button>
-            </form>
-        </div>
-    </div>
+            <x-button class="px-5 py-3 mt-5 w-80 bg-blue-500 justify-center">
+                Get In
+            </x-button>
+        </form>
+    </x-modal>
+    <x-modal trigger="showSuccess" class="bg-green-500">
+        <p class="animate-pulse text-white text-9xl font-extrablod text-center">
+            &check;
+        </p>
+        <p class="text-white text-5xl font-extrablod text-center mt-12">
+            Great!
+        </p>
+        @if(request('verified'))
+            <p class="text-white text-3xl text-center">
+                Thanks for confirmation.
+            </p>
+        @else
+            <p class="text-white text-3xl text-center">
+                See you in your inbox.
+            </p>
+        @endif
+    </x-modal>
 </div>
